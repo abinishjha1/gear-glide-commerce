@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { InquiryData } from '@/types/product';
 import { useToast } from '@/hooks/use-toast';
+import { saveInquiry } from '@/services/inquiry';
 
 // Define the form schema
 const formSchema = z.object({
@@ -42,20 +43,19 @@ export const ProductInquiryForm = ({ productId, productName }: ProductInquiryFor
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     
-    // Create inquiry object
+    // Create inquiry object with required fields
     const inquiry: InquiryData = {
-      ...data,
+      name: data.name, // Ensure name is not optional
+      email: data.email, // Ensure email is not optional
+      message: data.message, // Ensure message is not optional
       productId,
       productName,
       createdAt: new Date().toISOString(),
     };
     
-    // For now, just log the inquiry data (we'll add database connection later)
-    console.log('Inquiry data:', inquiry);
-    
     try {
-      // Simulate API call with timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Save to database
+      await saveInquiry(inquiry);
       
       // Show success message
       toast({
